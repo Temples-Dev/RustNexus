@@ -44,6 +44,17 @@ impl Router {
         self
     }
 
+
+    pub fn patch<H>(mut self, path: &str, handler: H) -> Self
+    where
+        H: axum::handler::Handler<(), Body = axum::body::Body> + Clone + Send + 'static,
+    {
+        self.axum_router = self.axum_router.route(path, patch(handler));
+        self.routes.insert(path.to_string(), "PATCH".to_string());
+        self
+    }
+
+
     pub fn delete<H>(mut self, path: &str, handler: H) -> Self
     where
         H: axum::handler::Handler<(), Body = axum::body::Body> + Clone + Send + 'static,
