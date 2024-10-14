@@ -1,6 +1,7 @@
 use axum::{
-    routing::{delete, get, post, put},
+    routing::{delete, get, post, put, patch}, // Import patch here
     Router as AxumRouter,
+    body::Body, // Import Body
 };
 use std::collections::HashMap;
 
@@ -12,14 +13,14 @@ pub struct Router {
 impl Router {
     pub fn new() -> Self {
         Router {
-            axum_router: AxumRouter::new(),
+            axum_router: AxumRouter::new(), // Correctly initialize the router
             routes: HashMap::new(),
         }
     }
 
     pub fn get<H>(mut self, path: &str, handler: H) -> Self
     where
-        H: axum::handler::Handler<(), Body = axum::body::Body> + Clone + Send + 'static,
+        H: axum::handler::Handler<Body, ()> + Clone + Send + Sync + 'static, 
     {
         self.axum_router = self.axum_router.route(path, get(handler));
         self.routes.insert(path.to_string(), "GET".to_string());
@@ -28,7 +29,7 @@ impl Router {
 
     pub fn post<H>(mut self, path: &str, handler: H) -> Self
     where
-        H: axum::handler::Handler<(), Body = axum::body::Body> + Clone + Send + 'static,
+        H: axum::handler::Handler<Body, ()>+ Clone + Send + Sync + 'static
     {
         self.axum_router = self.axum_router.route(path, post(handler));
         self.routes.insert(path.to_string(), "POST".to_string());
@@ -37,27 +38,25 @@ impl Router {
 
     pub fn put<H>(mut self, path: &str, handler: H) -> Self
     where
-        H: axum::handler::Handler<(), Body = axum::body::Body> + Clone + Send + 'static,
+        H: axum::handler::Handler<Body, ()>+ Clone + Send + Sync + 'static
     {
         self.axum_router = self.axum_router.route(path, put(handler));
         self.routes.insert(path.to_string(), "PUT".to_string());
         self
     }
 
-
     pub fn patch<H>(mut self, path: &str, handler: H) -> Self
     where
-        H: axum::handler::Handler<(), Body = axum::body::Body> + Clone + Send + 'static,
+        H: axum::handler::Handler<Body, ()>+ Clone + Send + Sync + 'static
     {
-        self.axum_router = self.axum_router.route(path, patch(handler));
+        self.axum_router = self.axum_router.route(path, patch(handler)); // Use patch here
         self.routes.insert(path.to_string(), "PATCH".to_string());
         self
     }
 
-
     pub fn delete<H>(mut self, path: &str, handler: H) -> Self
     where
-        H: axum::handler::Handler<(), Body = axum::body::Body> + Clone + Send + 'static,
+        H: axum::handler::Handler<Body, ()>+ Clone + Send + Sync + 'static
     {
         self.axum_router = self.axum_router.route(path, delete(handler));
         self.routes.insert(path.to_string(), "DELETE".to_string());
