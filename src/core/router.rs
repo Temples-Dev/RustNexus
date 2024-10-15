@@ -1,7 +1,7 @@
 use axum::{
-    routing::{delete, get, post, put, patch}, // Import patch here
+    routing::{delete, get, post, put, patch}, 
     Router as AxumRouter,
-    body::Body, // Import Body
+    body::Body, 
     http::Method,
     handler::Handler,
 };
@@ -76,5 +76,10 @@ impl Router {
 
     pub fn build(self) -> AxumRouter {
         self.axum_router
+    }
+
+     // New method to get all registered routes
+     pub fn get_routes(&self) -> &HashMap<String, String> {
+        &self.routes
     }
 }
